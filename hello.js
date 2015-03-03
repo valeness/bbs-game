@@ -4,6 +4,11 @@ load("sbbsdefs.js");
 // Declare Utility Functions
 function cls(){console.clear();}
 
+function randRange(min, max) 
+{
+	return Math.random() * (max - min) + min;
+}
+
 // Clear Screen of rubbish
 cls();
 
@@ -21,17 +26,38 @@ function Player()
 //	this.level = prompt("Level");
 	this.hp = prompt("HP");
 	this.damage = prompt("Damage");
+	this.eWep = null;
 }
 
+// Player Methods and Junk
 Player.prototype = {
 	constructor: Player,
+	// Damage the Player
 	takeDamage:function(take_dmg) {
-		this.hp = this.hp - take_dmg;
+		this.hp = this.hp - Math.ceil(take_dmg);
+	},
+	// Do Damage
+	doDamage:function(eWep) {
+		this.damage = Math.ceil(randRange(eWep.min_dmg, eWep.max_dmg));
 	}
 }
 
-// Initialize Player
+// Declare Weapon Structure Object Thingamabob
+function Weapon(min_dmg, max_dmg, accuracy)
+{
+	this.min_dmg = min_dmg;
+	this.max_dmg = max_dmg;
+	this.accuracy = accuracy;
+}
+
+// Initialize Player Object
 var player = new Player();
+
+// Test Weapon
+var sword = new Weapon(2, 10, 100);
+
+// Equip Test Weapon
+player.eWep = sword;
 
 while(running == true){
 	console.clear();
@@ -45,8 +71,8 @@ while(running == true){
 	console.writeln("|Q|uit");
 	var cmd = prompt("Command");
 	if(cmd == "D" || cmd == "d"){
-		take_damage = prompt("Damage");
-		player.takeDamage(take_damage);
+		take_damage = player.doDamage(player.eWep);
+		player.takeDamage(player.damage);
 	}
 	else if(cmd == "Q" || cmd == "q") {
 		running = false;
