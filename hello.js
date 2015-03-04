@@ -4,9 +4,20 @@ load("sbbsdefs.js");
 // Declare Utility Functions
 function cls(){console.clear();}
 
+function print(msg){console.writeln(msg);}
+
 function randRange(min, max) 
 {
 	return Math.random() * (max - min) + min;
+}
+
+String.prototype.pad = function(p_string, length)
+{
+	var str = this;
+	while (str.length < length) {
+		str = str + p_string;
+	}
+	return str;
 }
 
 // Clear Screen of rubbish
@@ -27,6 +38,7 @@ function Player()
 	this.hp = prompt("HP");
 	this.damage = prompt("Damage");
 	this.eWep = null;
+	this.inventory = {}
 }
 
 // Player Methods and Junk
@@ -43,8 +55,9 @@ Player.prototype = {
 }
 
 // Declare Weapon Structure Object Thingamabob
-function Weapon(min_dmg, max_dmg, accuracy)
+function Weapon(name, min_dmg, max_dmg, accuracy)
 {
+	this.name = name;
 	this.min_dmg = min_dmg;
 	this.max_dmg = max_dmg;
 	this.accuracy = accuracy;
@@ -53,21 +66,27 @@ function Weapon(min_dmg, max_dmg, accuracy)
 // Initialize Player Object
 var player = new Player();
 
-// Test Weapon
-var sword = new Weapon(2, 10, 100);
+// Test Weapons
+var sword = new Weapon("Test Sword", 2, 10, 100);
+var dagger = new Weapon("Dagger", 1, 3, 100);
 
 // Equip Test Weapon
 player.eWep = sword;
+// Add it to inventory
+player.inventory[sword.name] = sword;
+player.inventory[dagger.name] = dagger;
 
 while(running == true){
 	console.clear();
 	console.crlf();
-	console.writeln("HP: " + player.hp);
+	print("HP: " + player.hp);
 	console.writeln("DMG: " + player.damage);
+	print("Weapon: " + player.eWep.name);
 	console.crlf();
 	console.writeln("\tMenu");
 	console.crlf();	
 	console.writeln("|D|amage yourself");
+	print("|I|nventory");
 	console.writeln("|Q|uit");
 	var cmd = prompt("Command");
 	if(cmd == "D" || cmd == "d"){
@@ -77,6 +96,16 @@ while(running == true){
 	else if(cmd == "Q" || cmd == "q") {
 		running = false;
 	}
+	else if(cmd == "I" || cmd == "i") {
+		cls();
+		print("\tInventory");
+		print("Name          | Min DMG | Max DMG |")
+		for(i in player.inventory) {
+			//print(player.inventory[i].name);
+			pad_length = 14;
+			name = i.pad(" ", pad_length);
+			print(name + "|");
+		}
+		console.pause();
+	}
 }
-
-console.pause();
